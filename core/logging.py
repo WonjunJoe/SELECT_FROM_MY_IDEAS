@@ -61,42 +61,39 @@ def setup_logging(
             diagnose=True,
         )
 
-    # File handlers
+    # File handlers - 3 fixed log files
     if log_to_file:
-        # General log file (rotates daily, keeps 7 days)
+        # General app log
         logger.add(
-            LOG_DIR / "app_{time:YYYY-MM-DD}.log",
+            LOG_DIR / "app.log",
             format=file_format if not json_logs else None,
             serialize=json_logs,
             level=level,
-            rotation="00:00",  # Rotate at midnight
-            retention="7 days",
-            compression="zip",
+            rotation="10 MB",
+            retention=1,
             backtrace=True,
             diagnose=True,
         )
 
-        # Error log file (separate file for errors)
+        # Error log
         logger.add(
-            LOG_DIR / "error_{time:YYYY-MM-DD}.log",
+            LOG_DIR / "error.log",
             format=file_format if not json_logs else None,
             serialize=json_logs,
             level="ERROR",
-            rotation="00:00",
-            retention="30 days",
-            compression="zip",
+            rotation="10 MB",
+            retention=1,
             backtrace=True,
             diagnose=True,
         )
 
-        # API requests log (for debugging API calls)
+        # API log
         logger.add(
-            LOG_DIR / "api_{time:YYYY-MM-DD}.log",
+            LOG_DIR / "api.log",
             format=file_format,
             level="DEBUG",
-            rotation="00:00",
-            retention="3 days",
-            compression="zip",
+            rotation="10 MB",
+            retention=1,
             filter=lambda record: "api" in record["extra"].get("category", ""),
         )
 

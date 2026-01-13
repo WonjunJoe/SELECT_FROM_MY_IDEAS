@@ -1,0 +1,4 @@
+2026-01-14 01:53:16.997 | INFO     | core.logging:setup_logging:100 | Logging initialized
+2026-01-14 01:53:17.331 | INFO     | database.connection:init_db:36 | Initializing database at /Users/wonjunjoe/Desktop/workspace/Select_from_my_Ideas/data/sessions.db
+2026-01-14 01:53:17.332 | INFO     | database.connection:init_db:38 | Database tables created
+2026-01-14 01:53:17.332 | INFO     | api.routes:startup_event:359 | FastAPI application started
