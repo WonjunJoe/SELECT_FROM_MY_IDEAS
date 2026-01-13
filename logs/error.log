@@ -1,0 +1,1 @@
+2026-01-14 02:01:38.462 | ERROR    | api.routes:log_requests:63 | Request failed: POST /session/start

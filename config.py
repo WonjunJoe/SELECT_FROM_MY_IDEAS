@@ -44,6 +44,12 @@ class Settings(BaseSettings):
     max_rounds: int = Field(
         default=5, ge=1, le=10, description="Maximum conversation rounds"
     )
+    questions_per_round: int = Field(
+        default=2, ge=1, le=5, description="Number of questions per round"
+    )
+    options_per_question: int = Field(
+        default=3, ge=2, le=6, description="Number of options per question"
+    )
 
     # Logging Configuration
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = Field(

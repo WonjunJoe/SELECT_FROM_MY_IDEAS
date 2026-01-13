@@ -5,12 +5,9 @@ from pydantic import BaseModel, Field
 class Understanding(BaseModel):
     """Represents the agent's understanding of the user's idea."""
 
-    main_themes: list[str] = Field(description="Main themes identified from the input")
-    user_intent: str = Field(description="The user's underlying intent or goal")
-    clarified_points: list[str] = Field(description="Points that have been clarified")
-    remaining_uncertainties: list[str] = Field(
-        description="Points that still need clarification"
-    )
+    what_they_said: str = Field(description="What the user expressed")
+    what_they_might_feel: str = Field(description="The emotion behind their words")
+    what_matters_to_them: str = Field(description="The deeper value or meaning")
 
 
 class Selection(BaseModel):
