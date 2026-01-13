@@ -1,0 +1,84 @@
+2026-01-14 01:43:21.492 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:43:21.501 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:43:21.502 | INFO     | __main__:<module>:21 | ==================================================
+2026-01-14 01:43:21.502 | INFO     | __main__:<module>:22 | Select From My Ideas - Web Server
+2026-01-14 01:43:21.502 | INFO     | __main__:<module>:23 | ==================================================
+2026-01-14 01:43:21.502 | INFO     | __main__:<module>:24 | Starting server at http://localhost:8000
+2026-01-14 01:43:21.650 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:47:29.956 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:47:29.966 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:47:29.966 | INFO     | __main__:<module>:21 | ==================================================
+2026-01-14 01:47:29.966 | INFO     | __main__:<module>:22 | Select From My Ideas - Web Server
+2026-01-14 01:47:29.966 | INFO     | __main__:<module>:23 | ==================================================
+2026-01-14 01:47:29.966 | INFO     | __main__:<module>:24 | Starting server at http://localhost:8000
+2026-01-14 01:47:30.081 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:48:00.110 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:48:00.119 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:48:00.119 | INFO     | __main__:<module>:21 | ==================================================
+2026-01-14 01:48:00.119 | INFO     | __main__:<module>:22 | Select From My Ideas - Web Server
+2026-01-14 01:48:00.120 | INFO     | __main__:<module>:23 | ==================================================
+2026-01-14 01:48:00.120 | INFO     | __main__:<module>:24 | Starting server at http://localhost:8000
+2026-01-14 01:48:15.372 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:48:15.381 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:48:15.381 | INFO     | __main__:<module>:21 | ==================================================
+2026-01-14 01:48:15.381 | INFO     | __main__:<module>:22 | Select From My Ideas - Web Server
+2026-01-14 01:48:15.381 | INFO     | __main__:<module>:23 | ==================================================
+2026-01-14 01:48:15.381 | INFO     | __main__:<module>:24 | Starting server at http://localhost:8000
+2026-01-14 01:48:15.500 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-14 01:48:15.833 | INFO     | database.connection:init_db:36 | Initializing database at /Users/wonjunjoe/Desktop/workspace/Select_from_my_Ideas/data/sessions.db
+2026-01-14 01:48:15.835 | INFO     | database.connection:init_db:38 | Database tables created
+2026-01-14 01:48:15.835 | INFO     | api.routes:startup_event:359 | FastAPI application started
+2026-01-14 01:48:56.881 | INFO     | api.routes:log_requests:42 | Request: GET /
+2026-01-14 01:48:56.891 | INFO     | api.routes:log_requests:53 | Response: GET / -> 200
+2026-01-14 01:48:56.912 | INFO     | api.routes:log_requests:42 | Request: GET /styles.css
+2026-01-14 01:48:56.913 | INFO     | api.routes:log_requests:42 | Request: GET /app.js
+2026-01-14 01:48:56.918 | INFO     | api.routes:log_requests:53 | Response: GET /app.js -> 304
+2026-01-14 01:48:56.922 | INFO     | api.routes:log_requests:53 | Response: GET /styles.css -> 304
+2026-01-14 01:48:57.281 | INFO     | api.routes:log_requests:42 | Request: GET /favicon.ico
+2026-01-14 01:48:57.281 | INFO     | api.routes:log_requests:53 | Response: GET /favicon.ico -> 404
+2026-01-14 01:49:11.886 | INFO     | api.routes:log_requests:42 | Request: POST /session/start
+2026-01-14 01:49:11.890 | INFO     | api.routes:log_requests:42 | Request: POST /session/start
+2026-01-14 01:49:11.891 | INFO     | api.routes:start_session:116 | Starting new session
+2026-01-14 01:49:11.918 | INFO     | services.llm_client:__init__:19 | LLMClient initialized with model: gpt-4o
+2026-01-14 01:49:11.918 | INFO     | services.orchestrator:start_session:33 | Session started: 3c6ead0c-75aa-4a68-97e8-bda28ac8ce86
+2026-01-14 01:49:16.659 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:49:16.670 | INFO     | database.repository:create_session:34 | Session created: 3c6ead0c-75aa-4a68-97e8-bda28ac8ce86
+2026-01-14 01:49:16.674 | INFO     | api.routes:start_session:138 | Session created: 3c6ead0c-75aa-4a68-97e8-bda28ac8ce86
+2026-01-14 01:49:16.674 | INFO     | api.routes:log_requests:53 | Response: POST /session/start -> 200
+2026-01-14 01:49:16.675 | INFO     | api.routes:start_session:116 | Starting new session
+2026-01-14 01:49:16.690 | INFO     | services.llm_client:__init__:19 | LLMClient initialized with model: gpt-4o
+2026-01-14 01:49:16.690 | INFO     | services.orchestrator:start_session:33 | Session started: 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:49:21.110 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:49:21.111 | INFO     | database.repository:create_session:34 | Session created: 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:49:21.112 | INFO     | api.routes:start_session:138 | Session created: 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:49:21.113 | INFO     | api.routes:log_requests:53 | Response: POST /session/start -> 200
+2026-01-14 01:49:21.113 | INFO     | api.routes:log_requests:42 | Request: POST /session/3c6ead0c-75aa-4a68-97e8-bda28ac8ce86/select
+2026-01-14 01:49:21.114 | INFO     | api.routes:submit_selections:183 | Processing selections for session 3c6ead0c-75aa-4a68-97e8-bda28ac8ce86
+2026-01-14 01:49:26.684 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:49:26.691 | INFO     | api.routes:submit_selections:249 | Session 3c6ead0c-75aa-4a68-97e8-bda28ac8ce86 continuing to next round
+2026-01-14 01:49:26.692 | INFO     | api.routes:log_requests:53 | Response: POST /session/3c6ead0c-75aa-4a68-97e8-bda28ac8ce86/select -> 200
+2026-01-14 01:49:40.499 | INFO     | api.routes:log_requests:42 | Request: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select
+2026-01-14 01:49:40.500 | INFO     | api.routes:submit_selections:183 | Processing selections for session 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:49:44.868 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:49:44.869 | INFO     | api.routes:submit_selections:249 | Session 74c41128-261c-4f58-9afe-9febec3ad314 continuing to next round
+2026-01-14 01:49:44.870 | INFO     | api.routes:log_requests:53 | Response: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select -> 200
+2026-01-14 01:49:50.035 | INFO     | api.routes:log_requests:42 | Request: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select
+2026-01-14 01:49:50.037 | INFO     | api.routes:submit_selections:183 | Processing selections for session 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:49:56.233 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:49:56.235 | INFO     | api.routes:submit_selections:249 | Session 74c41128-261c-4f58-9afe-9febec3ad314 continuing to next round
+2026-01-14 01:49:56.235 | INFO     | api.routes:log_requests:53 | Response: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select -> 200
+2026-01-14 01:49:59.415 | INFO     | api.routes:log_requests:42 | Request: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select
+2026-01-14 01:49:59.416 | INFO     | api.routes:submit_selections:183 | Processing selections for session 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:50:05.757 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:50:05.759 | INFO     | api.routes:submit_selections:249 | Session 74c41128-261c-4f58-9afe-9febec3ad314 continuing to next round
+2026-01-14 01:50:05.759 | INFO     | api.routes:log_requests:53 | Response: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select -> 200
+2026-01-14 01:50:11.944 | INFO     | api.routes:log_requests:42 | Request: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select
+2026-01-14 01:50:11.946 | INFO     | api.routes:submit_selections:183 | Processing selections for session 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:50:15.840 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:50:15.840 | INFO     | services.orchestrator:process_selections:103 | Session 74c41128-261c-4f58-9afe-9febec3ad314 concluding after round 4
+2026-01-14 01:50:15.840 | INFO     | services.orchestrator:_conclude:114 | Synthesizing final output for session 74c41128-261c-4f58-9afe-9febec3ad314
+2026-01-14 01:50:27.157 | INFO     | services.llm_client:chat:73 | LLM chat response received
+2026-01-14 01:50:27.157 | INFO     | services.orchestrator:_conclude:131 | Session 74c41128-261c-4f58-9afe-9febec3ad314 completed
+2026-01-14 01:50:27.157 | INFO     | api.routes:submit_selections:225 | Session 74c41128-261c-4f58-9afe-9febec3ad314 completed
+2026-01-14 01:50:27.159 | INFO     | database.repository:set_final_output:87 | Session 74c41128-261c-4f58-9afe-9febec3ad314 completed with final output
+2026-01-14 01:50:27.159 | INFO     | api.routes:log_requests:53 | Response: POST /session/74c41128-261c-4f58-9afe-9febec3ad314/select -> 200

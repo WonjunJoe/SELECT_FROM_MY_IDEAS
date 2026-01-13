@@ -7,8 +7,8 @@ through intelligent multi-turn conversations.
 """
 
 import sys
-from typing import Optional
 
+from config import settings
 from models import UserSelection, MainAgentOutput, FinalOutput
 from services.orchestrator import Orchestrator
 from core.logging import logger, setup_logging
@@ -125,8 +125,12 @@ def print_final_output(output: FinalOutput):
 
 def main():
     """Main CLI loop."""
-    # Initialize logging (console only for CLI, less verbose)
-    setup_logging(level="INFO", log_to_file=True, log_to_console=False)
+    # Initialize logging from config (console disabled for CLI by default)
+    setup_logging(
+        level=settings.log_level,
+        log_to_file=settings.log_to_file,
+        log_to_console=False,  # Disable console for CLI to avoid cluttering output
+    )
 
     logger.info("CLI application started")
 

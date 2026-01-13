@@ -5,24 +5,30 @@ Runs the FastAPI server with the web frontend
 """
 
 import uvicorn
+
+from config import settings
 from core.logging import logger, setup_logging
 
 
 if __name__ == "__main__":
-    # Initialize logging
-    setup_logging(level="INFO", log_to_file=True, log_to_console=True)
+    # Initialize logging from config
+    setup_logging(
+        level=settings.log_level,
+        log_to_file=settings.log_to_file,
+        log_to_console=settings.log_to_console,
+    )
 
     logger.info("=" * 50)
     logger.info("Select From My Ideas - Web Server")
     logger.info("=" * 50)
-    logger.info("Starting server at http://localhost:8000")
+    logger.info(f"Starting server at http://localhost:{settings.server_port}")
 
     try:
         uvicorn.run(
             "api.routes:app",
-            host="0.0.0.0",
-            port=8000,
-            reload=True,
+            host=settings.server_host,
+            port=settings.server_port,
+            reload=settings.server_reload,
         )
     except KeyboardInterrupt:
         logger.info("Server stopped by user")

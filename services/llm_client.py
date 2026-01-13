@@ -1,35 +1,28 @@
-import os
 import json
 import time
 from typing import Optional
 
 from openai import OpenAI
-from dotenv import load_dotenv
 
+from config import settings
 from core.logging import logger
-
-load_dotenv()
 
 
 class LLMClient:
     """Wrapper for OpenAI API with JSON mode support."""
 
-    def __init__(self, model: str = "gpt-4o"):
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            logger.error("OPENAI_API_KEY not found in environment")
-            raise ValueError(
-                "OPENAI_API_KEY not found. Please set it in your .env file."
-            )
-        self.client = OpenAI(api_key=api_key)
-        self.model = model
-        logger.info(f"LLMClient initialized with model: {model}")
+    def __init__(self, model: Optional[str] = None):
+        self.client = OpenAI(api_key=settings.openai_api_key)
+        self.model = model or settings.llm_model
+        self.default_temperature = settings.llm_temperature
+        self.default_max_tokens = settings.llm_max_tokens
+        logger.info(f"LLMClient initialized with model: {self.model}")
 
     def chat(
         self,
         system_prompt: str,
         user_message: str,
-        temperature: float = 0.7,
+        temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
     ) -> dict:
         """
@@ -44,6 +37,9 @@ class LLMClient:
         Returns:
             Parsed JSON response as a dictionary
         """
+        temp = temperature if temperature is not None else self.default_temperature
+        tokens = max_tokens if max_tokens is not None else self.default_max_tokens
+
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
@@ -52,18 +48,18 @@ class LLMClient:
         kwargs = {
             "model": self.model,
             "messages": messages,
-            "temperature": temperature,
+            "temperature": temp,
             "response_format": {"type": "json_object"},
         }
 
-        if max_tokens:
-            kwargs["max_tokens"] = max_tokens
+        if tokens:
+            kwargs["max_tokens"] = tokens
 
         start_time = time.time()
         logger.debug(
             "LLM chat request",
             model=self.model,
-            temperature=temperature,
+            temperature=temp,
             user_message_length=len(user_message),
         )
 
@@ -106,7 +102,7 @@ class LLMClient:
         self,
         system_prompt: str,
         messages: list[dict],
-        temperature: float = 0.7,
+        temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
     ) -> dict:
         """
@@ -121,23 +117,26 @@ class LLMClient:
         Returns:
             Parsed JSON response as a dictionary
         """
+        temp = temperature if temperature is not None else self.default_temperature
+        tokens = max_tokens if max_tokens is not None else self.default_max_tokens
+
         full_messages = [{"role": "system", "content": system_prompt}] + messages
 
         kwargs = {
             "model": self.model,
             "messages": full_messages,
-            "temperature": temperature,
+            "temperature": temp,
             "response_format": {"type": "json_object"},
         }
 
-        if max_tokens:
-            kwargs["max_tokens"] = max_tokens
+        if tokens:
+            kwargs["max_tokens"] = tokens
 
         start_time = time.time()
         logger.debug(
             "LLM chat_with_history request",
             model=self.model,
-            temperature=temperature,
+            temperature=temp,
             num_messages=len(messages),
         )
 

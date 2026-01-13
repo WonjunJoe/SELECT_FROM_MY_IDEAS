@@ -90,3 +90,56 @@
 2026-01-13 15:28:53.980 | INFO     | services.orchestrator:_conclude:131 | Session 1b307754-f3f2-409e-9056-d21413b06841 completed
 2026-01-13 15:28:53.982 | INFO     | database.repository:set_final_output:87 | Session 1b307754-f3f2-409e-9056-d21413b06841 completed with final output
 2026-01-13 15:28:53.984 | INFO     | api.routes:log_requests:53 | Response: POST /session/start -> 200
+2026-01-13 21:40:23.679 | INFO     | api.routes:shutdown_event:366 | FastAPI application shutting down. Active sessions: 1
+2026-01-13 21:40:23.684 | ERROR    | __main__:<module>:30 | Server error: [Errno 32] Broken pipe
+Traceback (most recent call last):
+
+> File "/Users/wonjunjoe/Desktop/workspace/Select_from_my_Ideas/server.py", line 21, in <module>
+    uvicorn.run(
+    │       └ <function run at 0x10648eca0>
+    └ <module 'uvicorn' from '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/uvicorn/__init__.py'>
+
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/uvicorn/main.py", line 589, in run
+    ChangeReload(config, target=server.run, sockets=[sock]).run()
+    │            │              │      │             └ <socket.socket fd=6, family=2, type=1, proto=0, laddr=('0.0.0.0', 8000)>
+    │            │              │      └ <function Server.run at 0x106322480>
+    │            │              └ <uvicorn.server.Server object at 0x1064ee120>
+    │            └ <uvicorn.config.Config object at 0x1064ed2b0>
+    └ <class 'uvicorn.supervisors.statreload.StatReload'>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/uvicorn/supervisors/basereload.py", line 59, in run
+    self.restart()
+    │    └ <function StatReload.restart at 0x106498400>
+    └ <uvicorn.supervisors.statreload.StatReload object at 0x1064ee3c0>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/uvicorn/supervisors/statreload.py", line 47, in restart
+    return super().restart()
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/uvicorn/supervisors/basereload.py", line 101, in restart
+    self.process.start()
+    │    │       └ <function BaseProcess.start at 0x106344220>
+    │    └ <SpawnProcess name='SpawnProcess-2' parent=57837 initial>
+    └ <uvicorn.supervisors.statreload.StatReload object at 0x1064ee3c0>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/process.py", line 121, in start
+    self._popen = self._Popen(self)
+    │    │        │    │      └ <SpawnProcess name='SpawnProcess-2' parent=57837 initial>
+    │    │        │    └ <staticmethod(<function SpawnProcess._Popen at 0x106347a60>)>
+    │    │        └ <SpawnProcess name='SpawnProcess-2' parent=57837 initial>
+    │    └ None
+    └ <SpawnProcess name='SpawnProcess-2' parent=57837 initial>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/context.py", line 289, in _Popen
+    return Popen(process_obj)
+           │     └ <SpawnProcess name='SpawnProcess-2' parent=57837 initial>
+           └ <class 'multiprocessing.popen_spawn_posix.Popen'>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/popen_spawn_posix.py", line 32, in __init__
+    super().__init__(process_obj)
+                     └ <SpawnProcess name='SpawnProcess-2' parent=57837 initial>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/popen_fork.py", line 17, in __init__
+    util._flush_std_streams()
+    │    └ <function _flush_std_streams at 0x1063abd80>
+    └ <module 'multiprocessing.util' from '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/util.py'>
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/util.py", line 431, in _flush_std_streams
+    sys.stderr.flush()
+    │   │      └ <method 'flush' of '_io.TextIOWrapper' objects>
+    │   └ <_io.TextIOWrapper name='<stderr>' mode='w' encoding='utf-8'>
+    └ <module 'sys' (built-in)>
+
+BrokenPipeError: [Errno 32] Broken pipe
+2026-01-13 21:42:23.146 | INFO     | core.logging:setup_logging:103 | Logging initialized
