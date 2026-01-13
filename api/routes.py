@@ -2,17 +2,20 @@
 FastAPI routes for Select From My Ideas
 """
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from sqlalchemy.orm import Session
 import os
 import time
 
 from models import UserSelection, FinalOutput
 from services.orchestrator import Orchestrator
+from database import init_db, SessionRepository
+from database.connection import get_db_session
 from core.logging import logger
 
 app = FastAPI(title="Select From My Ideas API")
@@ -26,8 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory session storage (for MVP)
-sessions: dict[str, Orchestrator] = {}
+# In-memory orchestrator cache (for active sessions)
+orchestrators: dict[str, Orchestrator] = {}
 
 
 # Request logging middleware
@@ -36,7 +39,6 @@ async def log_requests(request: Request, call_next):
     """Log all incoming requests."""
     start_time = time.time()
 
-    # Log request
     logger.info(
         f"Request: {request.method} {request.url.path}",
         method=request.method,
@@ -80,26 +82,36 @@ class SelectionInput(BaseModel):
 
 
 class SubmitSelectionsRequest(BaseModel):
-    selections: list[SelectionInput]
+    selections: List[SelectionInput]
 
 
 class SelectionResponse(BaseModel):
     question: str
-    options: list[str]
+    options: List[str]
     allow_other: bool
 
 
 class SessionResponse(BaseModel):
     session_id: str
     summary: str
-    selections: list[SelectionResponse]
+    selections: List[SelectionResponse]
     should_conclude: bool
     final_output: Optional[dict] = None
 
 
+class SessionListResponse(BaseModel):
+    sessions: List[dict]
+    total: int
+    limit: int
+    offset: int
+
+
 # Routes
 @app.post("/session/start", response_model=SessionResponse)
-async def start_session(request: StartSessionRequest):
+async def start_session(
+    request: StartSessionRequest,
+    db: Session = Depends(get_db_session),
+):
     """Start a new session with user's raw idea."""
     logger.info(
         "Starting new session",
@@ -112,7 +124,16 @@ async def start_session(request: StartSessionRequest):
         output = orchestrator.start_session(request.input)
 
         session_id = orchestrator.session.session_id
-        sessions[session_id] = orchestrator
+        orchestrators[session_id] = orchestrator
+
+        # Save to database
+        repo = SessionRepository(db)
+        repo.create_session(session_id, request.input)
+        repo.add_round(
+            session_id=session_id,
+            round_number=1,
+            agent_output=output.model_dump(),
+        )
 
         logger.info(
             f"Session created: {session_id}",
@@ -124,6 +145,8 @@ async def start_session(request: StartSessionRequest):
         if output.should_conclude:
             logger.info(f"Session {session_id} concluding immediately")
             final = orchestrator.process_selections([])
+            if isinstance(final, FinalOutput):
+                repo.set_final_output(session_id, final.model_dump())
             return SessionResponse(
                 session_id=session_id,
                 summary=output.summary,
@@ -151,7 +174,11 @@ async def start_session(request: StartSessionRequest):
 
 
 @app.post("/session/{session_id}/select", response_model=SessionResponse)
-async def submit_selections(session_id: str, request: SubmitSelectionsRequest):
+async def submit_selections(
+    session_id: str,
+    request: SubmitSelectionsRequest,
+    db: Session = Depends(get_db_session),
+):
     """Submit user selections and get next response."""
     logger.info(
         f"Processing selections for session {session_id}",
@@ -159,11 +186,12 @@ async def submit_selections(session_id: str, request: SubmitSelectionsRequest):
         num_selections=len(request.selections),
     )
 
-    if session_id not in sessions:
-        logger.warning(f"Session not found: {session_id}")
-        raise HTTPException(status_code=404, detail="Session not found")
+    if session_id not in orchestrators:
+        logger.warning(f"Session not found in memory: {session_id}")
+        raise HTTPException(status_code=404, detail="Session not found or expired")
 
-    orchestrator = sessions[session_id]
+    orchestrator = orchestrators[session_id]
+    repo = SessionRepository(db)
 
     user_selections = [
         UserSelection(
@@ -173,6 +201,14 @@ async def submit_selections(session_id: str, request: SubmitSelectionsRequest):
         )
         for sel in request.selections
     ]
+
+    # Save user selections to current round
+    current_round = orchestrator.session.current_round - 1
+    repo.update_round_selections(
+        session_id=session_id,
+        round_number=current_round,
+        user_selections=[s.model_dump() for s in user_selections],
+    )
 
     # Log user selections
     for sel in user_selections:
@@ -191,8 +227,10 @@ async def submit_selections(session_id: str, request: SubmitSelectionsRequest):
             session_id=session_id,
             num_action_items=len(result.action_items),
         )
-        # Clean up session after completion
-        del sessions[session_id]
+        # Save final output and cleanup
+        repo.set_final_output(session_id, result.model_dump())
+        del orchestrators[session_id]
+
         return SessionResponse(
             session_id=session_id,
             summary="",
@@ -200,6 +238,13 @@ async def submit_selections(session_id: str, request: SubmitSelectionsRequest):
             should_conclude=True,
             final_output=result.model_dump(),
         )
+
+    # Save new round to database
+    repo.add_round(
+        session_id=session_id,
+        round_number=orchestrator.session.current_round - 1,
+        agent_output=result.model_dump(),
+    )
 
     logger.info(
         f"Session {session_id} continuing to next round",
@@ -224,32 +269,70 @@ async def submit_selections(session_id: str, request: SubmitSelectionsRequest):
 
 
 @app.get("/session/{session_id}")
-async def get_session(session_id: str):
-    """Get current session state."""
+async def get_session(session_id: str, db: Session = Depends(get_db_session)):
+    """Get session state from database."""
     logger.debug(f"Getting session state: {session_id}")
 
-    if session_id not in sessions:
+    repo = SessionRepository(db)
+    session = repo.get_session(session_id)
+
+    if not session:
         logger.warning(f"Session not found: {session_id}")
         raise HTTPException(status_code=404, detail="Session not found")
 
-    orchestrator = sessions[session_id]
-    session = orchestrator.get_session()
+    return session.to_dict()
 
-    return {
-        "session_id": session.session_id,
-        "status": session.status,
-        "current_round": session.current_round,
-        "original_input": session.original_input,
-    }
+
+@app.get("/sessions", response_model=SessionListResponse)
+async def list_sessions(
+    status: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0,
+    db: Session = Depends(get_db_session),
+):
+    """List all sessions with optional filtering."""
+    logger.debug(f"Listing sessions: status={status}, limit={limit}, offset={offset}")
+
+    repo = SessionRepository(db)
+    sessions = repo.get_all_sessions(status=status, limit=limit, offset=offset)
+    total = repo.get_session_count(status=status)
+
+    return SessionListResponse(
+        sessions=[s.to_dict() for s in sessions],
+        total=total,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@app.delete("/session/{session_id}")
+async def delete_session(session_id: str, db: Session = Depends(get_db_session)):
+    """Delete a session."""
+    logger.info(f"Deleting session: {session_id}")
+
+    repo = SessionRepository(db)
+    success = repo.delete_session(session_id)
+
+    if not success:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    # Also remove from memory if present
+    if session_id in orchestrators:
+        del orchestrators[session_id]
+
+    return {"message": "Session deleted", "session_id": session_id}
 
 
 # Health check endpoint
 @app.get("/health")
-async def health_check():
+async def health_check(db: Session = Depends(get_db_session)):
     """Health check endpoint."""
+    repo = SessionRepository(db)
     return {
         "status": "healthy",
-        "active_sessions": len(sessions),
+        "active_sessions": len(orchestrators),
+        "total_sessions": repo.get_session_count(),
+        "completed_sessions": repo.get_session_count(status="completed"),
     }
 
 
@@ -271,7 +354,8 @@ if os.path.exists(frontend_path):
 # Startup event
 @app.on_event("startup")
 async def startup_event():
-    """Log application startup."""
+    """Initialize database and log startup."""
+    init_db()
     logger.info("FastAPI application started")
 
 
@@ -279,4 +363,4 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Log application shutdown."""
-    logger.info(f"FastAPI application shutting down. Active sessions: {len(sessions)}")
+    logger.info(f"FastAPI application shutting down. Active sessions: {len(orchestrators)}")

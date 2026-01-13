@@ -51,3 +51,42 @@
 2026-01-13 15:16:13.561 | INFO     | services.orchestrator:_conclude:131 | Session 565a3040-8edd-444a-b550-2479e3377af3 completed
 2026-01-13 15:16:13.561 | INFO     | api.routes:submit_selections:189 | Session 565a3040-8edd-444a-b550-2479e3377af3 completed
 2026-01-13 15:16:13.562 | INFO     | api.routes:log_requests:51 | Response: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select -> 200
+2026-01-13 15:23:55.387 | INFO     | api.routes:shutdown_event:282 | FastAPI application shutting down. Active sessions: 0
+2026-01-13 15:23:55.523 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:23:56.111 | INFO     | database.connection:init_db:36 | Initializing database at /Users/wonjunjoe/Desktop/workspace/Select_from_my_Ideas/data/sessions.db
+2026-01-13 15:23:56.113 | INFO     | database.connection:init_db:38 | Database tables created
+2026-01-13 15:23:56.114 | INFO     | api.routes:startup_event:359 | FastAPI application started
+2026-01-13 15:27:09.232 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:27:09.241 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:27:09.241 | INFO     | __main__:<module>:15 | ==================================================
+2026-01-13 15:27:09.241 | INFO     | __main__:<module>:16 | Select From My Ideas - Web Server
+2026-01-13 15:27:09.241 | INFO     | __main__:<module>:17 | ==================================================
+2026-01-13 15:27:09.241 | INFO     | __main__:<module>:18 | Starting server at http://localhost:8000
+2026-01-13 15:27:09.320 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:27:09.751 | INFO     | database.connection:init_db:36 | Initializing database at /Users/wonjunjoe/Desktop/workspace/Select_from_my_Ideas/data/sessions.db
+2026-01-13 15:27:09.753 | INFO     | database.connection:init_db:38 | Database tables created
+2026-01-13 15:27:09.753 | INFO     | api.routes:startup_event:359 | FastAPI application started
+2026-01-13 15:27:27.350 | INFO     | api.routes:log_requests:42 | Request: GET /health
+2026-01-13 15:27:27.356 | INFO     | api.routes:log_requests:53 | Response: GET /health -> 200
+2026-01-13 15:27:41.790 | INFO     | api.routes:log_requests:42 | Request: GET /sessions
+2026-01-13 15:27:41.801 | INFO     | api.routes:log_requests:53 | Response: GET /sessions -> 200
+2026-01-13 15:28:24.724 | INFO     | api.routes:log_requests:42 | Request: GET /
+2026-01-13 15:28:24.758 | INFO     | api.routes:log_requests:53 | Response: GET / -> 200
+2026-01-13 15:28:24.779 | INFO     | api.routes:log_requests:42 | Request: GET /styles.css
+2026-01-13 15:28:24.781 | INFO     | api.routes:log_requests:42 | Request: GET /app.js
+2026-01-13 15:28:24.783 | INFO     | api.routes:log_requests:53 | Response: GET /app.js -> 304
+2026-01-13 15:28:24.784 | INFO     | api.routes:log_requests:53 | Response: GET /styles.css -> 304
+2026-01-13 15:28:48.906 | INFO     | api.routes:log_requests:42 | Request: POST /session/start
+2026-01-13 15:28:48.911 | INFO     | api.routes:start_session:116 | Starting new session
+2026-01-13 15:28:48.955 | INFO     | services.llm_client:__init__:26 | LLMClient initialized with model: gpt-4o
+2026-01-13 15:28:48.956 | INFO     | services.orchestrator:start_session:33 | Session started: 1b307754-f3f2-409e-9056-d21413b06841
+2026-01-13 15:28:50.885 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:28:50.892 | INFO     | database.repository:create_session:34 | Session created: 1b307754-f3f2-409e-9056-d21413b06841
+2026-01-13 15:28:50.896 | INFO     | api.routes:start_session:138 | Session created: 1b307754-f3f2-409e-9056-d21413b06841
+2026-01-13 15:28:50.896 | INFO     | api.routes:start_session:146 | Session 1b307754-f3f2-409e-9056-d21413b06841 concluding immediately
+2026-01-13 15:28:50.896 | INFO     | services.orchestrator:process_selections:81 | Session 1b307754-f3f2-409e-9056-d21413b06841 concluding based on last round
+2026-01-13 15:28:50.896 | INFO     | services.orchestrator:_conclude:114 | Synthesizing final output for session 1b307754-f3f2-409e-9056-d21413b06841
+2026-01-13 15:28:53.980 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:28:53.980 | INFO     | services.orchestrator:_conclude:131 | Session 1b307754-f3f2-409e-9056-d21413b06841 completed
+2026-01-13 15:28:53.982 | INFO     | database.repository:set_final_output:87 | Session 1b307754-f3f2-409e-9056-d21413b06841 completed with final output
+2026-01-13 15:28:53.984 | INFO     | api.routes:log_requests:53 | Response: POST /session/start -> 200
