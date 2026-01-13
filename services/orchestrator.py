@@ -3,6 +3,7 @@ from typing import Optional
 from models import Session, UserSelection, MainAgentOutput, FinalOutput
 from agents import MainAgent, Synthesizer
 from services.llm_client import LLMClient
+from core.logging import logger
 
 
 class Orchestrator:
@@ -16,6 +17,7 @@ class Orchestrator:
         self.main_agent = MainAgent(self.llm_client)
         self.synthesizer = Synthesizer(self.llm_client)
         self.session: Optional[Session] = None
+        logger.debug("Orchestrator initialized")
 
     def start_session(self, user_input: str) -> MainAgentOutput:
         """
@@ -28,6 +30,11 @@ class Orchestrator:
             MainAgentOutput from the first round
         """
         self.session = Session(original_input=user_input)
+        logger.info(
+            f"Session started: {self.session.session_id}",
+            session_id=self.session.session_id,
+            input_length=len(user_input),
+        )
 
         output = self.main_agent.run(
             original_input=user_input,
@@ -36,6 +43,11 @@ class Orchestrator:
         )
 
         self.session.add_round(output)
+        logger.debug(
+            f"First round completed for session {self.session.session_id}",
+            num_selections=len(output.selections),
+            should_conclude=output.should_conclude,
+        )
         return output
 
     def process_selections(
@@ -51,7 +63,14 @@ class Orchestrator:
             MainAgentOutput if continuing, FinalOutput if concluding
         """
         if not self.session:
+            logger.error("No active session when processing selections")
             raise ValueError("No active session. Call start_session first.")
+
+        logger.debug(
+            f"Processing {len(selections)} selections for session {self.session.session_id}",
+            session_id=self.session.session_id,
+            num_selections=len(selections),
+        )
 
         # Add selections to current round
         self.session.add_user_selections(selections)
@@ -59,9 +78,11 @@ class Orchestrator:
         # Check if we should conclude based on previous round
         last_round = self.session.conversation_history[-1]
         if last_round.agent_output.should_conclude:
+            logger.info(f"Session {self.session.session_id} concluding based on last round")
             return self._conclude()
 
         # Get next round from Main Agent
+        logger.debug(f"Getting next round from Main Agent (round {self.session.current_round})")
         output = self.main_agent.run(
             original_input=self.session.original_input,
             conversation_history=self.session.get_history_for_agent(),
@@ -70,8 +91,16 @@ class Orchestrator:
 
         self.session.add_round(output)
 
+        logger.debug(
+            f"Round {self.session.current_round - 1} completed",
+            session_id=self.session.session_id,
+            num_selections=len(output.selections),
+            should_conclude=output.should_conclude,
+        )
+
         # Check if this round should conclude
         if output.should_conclude:
+            logger.info(f"Session {self.session.session_id} concluding after round {self.session.current_round - 1}")
             return self._conclude()
 
         return output
@@ -79,7 +108,14 @@ class Orchestrator:
     def _conclude(self) -> FinalOutput:
         """Generate final output using the Synthesizer."""
         if not self.session:
+            logger.error("No active session when concluding")
             raise ValueError("No active session.")
+
+        logger.info(
+            f"Synthesizing final output for session {self.session.session_id}",
+            session_id=self.session.session_id,
+            total_rounds=len(self.session.conversation_history),
+        )
 
         last_round = self.session.conversation_history[-1]
         final_understanding = last_round.agent_output.understanding
@@ -91,6 +127,15 @@ class Orchestrator:
         )
 
         self.session.complete(final_output)
+
+        logger.info(
+            f"Session {self.session.session_id} completed",
+            session_id=self.session.session_id,
+            num_action_items=len(final_output.action_items),
+            num_tips=len(final_output.tips),
+            num_insights=len(final_output.insights),
+        )
+
         return final_output
 
     def get_session(self) -> Optional[Session]:

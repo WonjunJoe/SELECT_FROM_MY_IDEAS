@@ -11,6 +11,7 @@ from typing import Optional
 
 from models import UserSelection, MainAgentOutput, FinalOutput
 from services.orchestrator import Orchestrator
+from core.logging import logger, setup_logging
 
 
 def print_header():
@@ -59,6 +60,11 @@ def print_selections(output: MainAgentOutput) -> list[UserSelection]:
                         selected_option=selection.options[choice_num - 1],
                     )
                     selections.append(selected)
+                    logger.debug(
+                        f"User selected option {choice_num}",
+                        question=selection.question[:50],
+                        selected=selection.options[choice_num - 1],
+                    )
                     print(f"  -> {selection.options[choice_num - 1]}")
                     break
                 elif selection.allow_other and choice_num == len(selection.options) + 1:
@@ -69,6 +75,11 @@ def print_selections(output: MainAgentOutput) -> list[UserSelection]:
                         custom_input=custom,
                     )
                     selections.append(selected)
+                    logger.debug(
+                        f"User entered custom input",
+                        question=selection.question[:50],
+                        custom_input=custom,
+                    )
                     print(f"  -> {custom}")
                     break
                 else:
@@ -114,6 +125,11 @@ def print_final_output(output: FinalOutput):
 
 def main():
     """Main CLI loop."""
+    # Initialize logging (console only for CLI, less verbose)
+    setup_logging(level="INFO", log_to_file=True, log_to_console=False)
+
+    logger.info("CLI application started")
+
     print_header()
 
     # Get initial idea from user
@@ -124,12 +140,16 @@ def main():
     user_input = input("> ").strip()
 
     if not user_input:
+        logger.info("No input provided, exiting")
         print("No input provided. Exiting.")
         sys.exit(0)
+
+    logger.info(f"User input received", input_length=len(user_input))
 
     try:
         orchestrator = Orchestrator()
     except ValueError as e:
+        logger.error(f"Failed to initialize orchestrator: {e}")
         print(f"\nError: {e}")
         print("Please create a .env file with OPENAI_API_KEY=your-key-here")
         sys.exit(1)
@@ -138,26 +158,38 @@ def main():
 
     try:
         # Start the session
+        logger.info("Starting session")
         output = orchestrator.start_session(user_input)
         round_num = 1
 
         # Main conversation loop
         while True:
+            logger.info(f"Round {round_num} started")
             print(f"\n[Round {round_num}]")
             print_summary(output.summary)
 
             if output.should_conclude:
+                logger.info("Session concluding")
                 print("Generating final output...")
                 # Process empty selections to trigger conclusion
                 final = orchestrator.process_selections([])
                 if isinstance(final, FinalOutput):
+                    logger.info(
+                        "Final output generated",
+                        num_action_items=len(final.action_items),
+                    )
                     print_final_output(final)
                 break
 
             if not output.selections:
+                logger.info("No more selections, concluding")
                 print("No more questions. Generating final output...")
                 final = orchestrator.process_selections([])
                 if isinstance(final, FinalOutput):
+                    logger.info(
+                        "Final output generated",
+                        num_action_items=len(final.action_items),
+                    )
                     print_final_output(final)
                 break
 
@@ -167,9 +199,14 @@ def main():
             print("\nThinking...")
 
             # Process selections
+            logger.info(f"Processing {len(selections)} selections")
             result = orchestrator.process_selections(selections)
 
             if isinstance(result, FinalOutput):
+                logger.info(
+                    "Final output generated",
+                    num_action_items=len(result.action_items),
+                )
                 print_final_output(result)
                 break
             else:
@@ -177,11 +214,15 @@ def main():
                 round_num += 1
 
     except KeyboardInterrupt:
+        logger.info("Session interrupted by user")
         print("\n\nSession interrupted. Goodbye!")
         sys.exit(0)
     except Exception as e:
+        logger.exception(f"Error during session: {e}")
         print(f"\nError: {e}")
         sys.exit(1)
+
+    logger.info("CLI application finished")
 
 
 if __name__ == "__main__":

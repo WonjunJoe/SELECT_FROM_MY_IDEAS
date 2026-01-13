@@ -1,0 +1,53 @@
+2026-01-13 15:10:44.527 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:11:18.757 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:11:19.085 | INFO     | api.routes:startup_event:275 | FastAPI application started
+2026-01-13 15:11:44.747 | INFO     | api.routes:shutdown_event:282 | FastAPI application shutting down. Active sessions: 0
+2026-01-13 15:11:44.867 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:11:45.226 | INFO     | api.routes:startup_event:275 | FastAPI application started
+2026-01-13 15:12:06.643 | INFO     | api.routes:shutdown_event:282 | FastAPI application shutting down. Active sessions: 0
+2026-01-13 15:12:06.768 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:12:07.121 | INFO     | api.routes:startup_event:275 | FastAPI application started
+2026-01-13 15:12:38.800 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:12:38.810 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:12:38.810 | INFO     | __main__:<module>:15 | ==================================================
+2026-01-13 15:12:38.810 | INFO     | __main__:<module>:16 | Select From My Ideas - Web Server
+2026-01-13 15:12:38.810 | INFO     | __main__:<module>:17 | ==================================================
+2026-01-13 15:12:38.810 | INFO     | __main__:<module>:18 | Starting server at http://localhost:8000
+2026-01-13 15:12:38.887 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:12:39.209 | INFO     | api.routes:startup_event:275 | FastAPI application started
+2026-01-13 15:13:14.477 | INFO     | api.routes:log_requests:40 | Request: GET /health
+2026-01-13 15:13:14.477 | INFO     | api.routes:log_requests:51 | Response: GET /health -> 200
+2026-01-13 15:14:02.367 | INFO     | api.routes:shutdown_event:282 | FastAPI application shutting down. Active sessions: 0
+2026-01-13 15:14:02.508 | INFO     | core.logging:setup_logging:103 | Logging initialized
+2026-01-13 15:14:02.870 | INFO     | api.routes:startup_event:275 | FastAPI application started
+2026-01-13 15:14:26.017 | INFO     | api.routes:log_requests:40 | Request: POST /session/start
+2026-01-13 15:14:26.019 | INFO     | api.routes:start_session:104 | Starting new session
+2026-01-13 15:14:26.057 | INFO     | services.llm_client:__init__:26 | LLMClient initialized with model: gpt-4o
+2026-01-13 15:14:26.058 | INFO     | services.orchestrator:start_session:33 | Session started: 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:14:31.091 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:14:31.091 | INFO     | api.routes:start_session:117 | Session created: 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:14:31.091 | INFO     | api.routes:log_requests:51 | Response: POST /session/start -> 200
+2026-01-13 15:14:57.098 | INFO     | api.routes:log_requests:40 | Request: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select
+2026-01-13 15:14:57.100 | INFO     | api.routes:submit_selections:156 | Processing selections for session 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:15:02.661 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:15:02.662 | INFO     | api.routes:submit_selections:204 | Session 565a3040-8edd-444a-b550-2479e3377af3 continuing to next round
+2026-01-13 15:15:02.662 | INFO     | api.routes:log_requests:51 | Response: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select -> 200
+2026-01-13 15:15:23.799 | INFO     | api.routes:log_requests:40 | Request: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select
+2026-01-13 15:15:23.800 | INFO     | api.routes:submit_selections:156 | Processing selections for session 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:15:29.231 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:15:29.231 | INFO     | api.routes:submit_selections:204 | Session 565a3040-8edd-444a-b550-2479e3377af3 continuing to next round
+2026-01-13 15:15:29.232 | INFO     | api.routes:log_requests:51 | Response: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select -> 200
+2026-01-13 15:15:45.412 | INFO     | api.routes:log_requests:40 | Request: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select
+2026-01-13 15:15:45.413 | INFO     | api.routes:submit_selections:156 | Processing selections for session 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:15:51.526 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:15:51.526 | INFO     | api.routes:submit_selections:204 | Session 565a3040-8edd-444a-b550-2479e3377af3 continuing to next round
+2026-01-13 15:15:51.527 | INFO     | api.routes:log_requests:51 | Response: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select -> 200
+2026-01-13 15:16:02.853 | INFO     | api.routes:log_requests:40 | Request: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select
+2026-01-13 15:16:02.854 | INFO     | api.routes:submit_selections:156 | Processing selections for session 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:16:05.417 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:16:05.418 | INFO     | services.orchestrator:process_selections:103 | Session 565a3040-8edd-444a-b550-2479e3377af3 concluding after round 4
+2026-01-13 15:16:05.418 | INFO     | services.orchestrator:_conclude:114 | Synthesizing final output for session 565a3040-8edd-444a-b550-2479e3377af3
+2026-01-13 15:16:13.561 | INFO     | services.llm_client:chat:77 | LLM chat response received
+2026-01-13 15:16:13.561 | INFO     | services.orchestrator:_conclude:131 | Session 565a3040-8edd-444a-b550-2479e3377af3 completed
+2026-01-13 15:16:13.561 | INFO     | api.routes:submit_selections:189 | Session 565a3040-8edd-444a-b550-2479e3377af3 completed
+2026-01-13 15:16:13.562 | INFO     | api.routes:log_requests:51 | Response: POST /session/565a3040-8edd-444a-b550-2479e3377af3/select -> 200
