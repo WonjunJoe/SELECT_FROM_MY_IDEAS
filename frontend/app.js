@@ -13,6 +13,15 @@ const state = {
   selections: {},
   originalInput: '',
   currentData: null,
+  userProfile: {
+    difficulty: null,
+    age: null,
+    gender: null,
+    interests: [],
+    job: null,
+    goals: null,
+    lifestyle: null,
+  },
 };
 
 // ===== DOM ELEMENTS =====
@@ -21,10 +30,21 @@ const $$ = (sel) => document.querySelectorAll(sel);
 
 const elements = {
   // Screens
+  screenProfile: $('#screenProfile'),
   screenWelcome: $('#screenWelcome'),
   screenQuestions: $('#screenQuestions'),
   screenLoading: $('#screenLoading'),
   screenResults: $('#screenResults'),
+
+  // Profile
+  profileDifficulty: $('#profileDifficulty'),
+  profileAge: $('#profileAge'),
+  profileGender: $('#profileGender'),
+  profileInterests: $('#profileInterests'),
+  profileJob: $('#profileJob'),
+  profileGoals: $('#profileGoals'),
+  profileLifestyle: $('#profileLifestyle'),
+  btnProfileNext: $('#btnProfileNext'),
 
   // Round indicator
   roundIndicator: $('#roundIndicator'),
@@ -39,6 +59,7 @@ const elements = {
   contextSummary: $('#contextSummary'),
   questionsList: $('#questionsList'),
   btnBack: $('#btnBack'),
+  btnEndEarly: $('#btnEndEarly'),
   btnNext: $('#btnNext'),
 
   // Results
@@ -91,12 +112,15 @@ function updateRoundIndicator(round) {
 
 
 // ===== API CALLS =====
-async function startSession(input) {
+async function startSession(input, userProfile) {
   try {
     const response = await fetch(`${API_BASE}/session/start`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input }),
+      body: JSON.stringify({
+        input,
+        user_profile: userProfile,
+      }),
     });
 
     if (!response.ok) throw new Error('Failed to start session');
@@ -121,6 +145,23 @@ async function submitSelections(sessionId, selections) {
   } catch (error) {
     console.error('API Error:', error);
     return mockSubmitSelections(state.currentRound);
+  }
+}
+
+
+async function endSessionEarly(sessionId) {
+  try {
+    const response = await fetch(`${API_BASE}/session/${sessionId}/end`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) throw new Error('Failed to end session');
+    return await response.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    // Mock response for demo
+    return mockSubmitSelections(3);
   }
 }
 
@@ -410,7 +451,17 @@ async function handleStart() {
   state.originalInput = input;
   showScreen('screenLoading');
 
-  const data = await startSession(input);
+  // Build user profile from state
+  const userProfile = {
+    age: state.userProfile.age,
+    gender: state.userProfile.gender,
+    interests: state.userProfile.interests,
+    job: state.userProfile.job || null,
+    goals: state.userProfile.goals || null,
+    lifestyle: state.userProfile.lifestyle || null,
+  };
+
+  const data = await startSession(input, userProfile);
 
   state.sessionId = data.session_id;
   state.currentRound = 1;
@@ -455,6 +506,26 @@ function handleBack() {
 }
 
 
+async function handleEndEarly() {
+  if (!state.sessionId) {
+    handleBack();
+    return;
+  }
+
+  showScreen('screenLoading');
+
+  const data = await endSessionEarly(state.sessionId);
+
+  if (data.final_output) {
+    renderResults(data.final_output);
+    showScreen('screenResults');
+  } else {
+    // Fallback if no final output
+    handleBack();
+  }
+}
+
+
 function handleRestart() {
   resetState();
   elements.ideaInput.value = '';
@@ -487,12 +558,94 @@ function handleExampleClick(e) {
 }
 
 
+// ===== PROFILE HANDLERS =====
+function handleProfileNext() {
+  // Validate required fields
+  const difficulty = elements.profileDifficulty.querySelector('.difficulty-card.selected')?.dataset.value;
+  const age = parseInt(elements.profileAge.value);
+  const gender = elements.profileGender.querySelector('.radio-btn.selected')?.dataset.value;
+  const interests = Array.from(elements.profileInterests.querySelectorAll('.interest-tag.selected'))
+    .map(tag => tag.dataset.value);
+
+  if (!difficulty) {
+    alert('어떤 방식을 원하시는지 선택해주세요');
+    return;
+  }
+
+  if (!age || age < 10 || age > 100) {
+    alert('나이를 입력해주세요 (10-100)');
+    elements.profileAge.focus();
+    return;
+  }
+
+  if (!gender) {
+    alert('성별을 선택해주세요');
+    return;
+  }
+
+  if (interests.length === 0) {
+    alert('관심사를 최소 1개 이상 선택해주세요');
+    return;
+  }
+
+  // Save to state
+  state.userProfile.difficulty = difficulty;
+  state.userProfile.age = age;
+  state.userProfile.gender = gender;
+  state.userProfile.interests = interests;
+
+  // Optional fields
+  state.userProfile.job = elements.profileJob.value.trim() || null;
+  state.userProfile.goals = elements.profileGoals.value.trim() || null;
+  state.userProfile.lifestyle = elements.profileLifestyle.querySelector('.radio-btn.selected')?.dataset.value || null;
+
+  // Go to welcome screen
+  showScreen('screenWelcome');
+  setTimeout(() => {
+    elements.ideaInput.focus();
+  }, 300);
+}
+
+
+function setupProfileInteractions() {
+  // Difficulty cards (single select)
+  elements.profileDifficulty.querySelectorAll('.difficulty-card').forEach(card => {
+    card.addEventListener('click', () => {
+      elements.profileDifficulty.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+
+  // Radio buttons (single select)
+  $$('.radio-group').forEach(group => {
+    group.querySelectorAll('.radio-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+  });
+
+  // Interest tags (multi select)
+  elements.profileInterests.querySelectorAll('.interest-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      tag.classList.toggle('selected');
+    });
+  });
+}
+
+
 // ===== INITIALIZATION =====
 function init() {
+  // Profile interactions
+  setupProfileInteractions();
+  elements.btnProfileNext.addEventListener('click', handleProfileNext);
+
   // Button events
   elements.btnStart.addEventListener('click', handleStart);
   elements.btnNext.addEventListener('click', handleNext);
   elements.btnBack.addEventListener('click', handleBack);
+  elements.btnEndEarly.addEventListener('click', handleEndEarly);
   elements.btnRestart.addEventListener('click', handleRestart);
 
   // Example tags
@@ -507,11 +660,6 @@ function init() {
       handleStart();
     }
   });
-
-  // Focus input on load
-  setTimeout(() => {
-    elements.ideaInput.focus();
-  }, 800);
 }
 
 

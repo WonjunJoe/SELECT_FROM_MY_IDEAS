@@ -34,6 +34,9 @@ class Session(BaseModel):
     session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     created_at: datetime = Field(default_factory=datetime.now)
     original_input: str = Field(description="The user's original raw input")
+    user_profile: Optional[dict] = Field(
+        default=None, description="User profile information for personalization"
+    )
     conversation_history: list[Round] = Field(
         default_factory=list, description="History of all rounds"
     )

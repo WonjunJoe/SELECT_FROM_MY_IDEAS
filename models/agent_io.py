@@ -2,6 +2,27 @@ from typing import Optional, Literal
 from pydantic import BaseModel, Field
 
 
+class UserProfile(BaseModel):
+    """User profile information for personalized responses."""
+
+    # Difficulty mode - determines response depth
+    difficulty: Literal["easy", "medium", "hard"] = Field(
+        description="Difficulty mode: easy=simple answers, medium=balanced, hard=deep questioning"
+    )
+
+    # Required fields
+    age: int = Field(description="User's age")
+    gender: str = Field(description="User's gender (남성/여성/기타/선택안함)")
+    interests: list[str] = Field(description="User's interests")
+
+    # Optional fields
+    job: Optional[str] = Field(default=None, description="User's job/occupation")
+    goals: Optional[str] = Field(default=None, description="User's life goals/values")
+    lifestyle: Optional[str] = Field(
+        default=None, description="User's current situation (학생/취준생/직장인/etc.)"
+    )
+
+
 class Understanding(BaseModel):
     """Represents the agent's understanding of the user's idea."""
 

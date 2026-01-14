@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from .base import BaseAgent
 from services.llm_client import LLMClient
@@ -19,6 +20,7 @@ class Synthesizer(BaseAgent):
         original_input: str,
         conversation_history: list[dict],
         final_understanding: Understanding,
+        user_profile: Optional[dict] = None,
     ) -> FinalOutput:
         """
         Generate final actionable output from the conversation.
@@ -27,11 +29,13 @@ class Synthesizer(BaseAgent):
             original_input: The user's original raw idea
             conversation_history: Full conversation history
             final_understanding: The Main Agent's final understanding
+            user_profile: Optional user profile for personalization
 
         Returns:
             FinalOutput with action items, tips, insights, and encouragement
         """
         input_data = {
+            "user_profile": user_profile,
             "original_input": original_input,
             "conversation_history": conversation_history,
             "final_understanding": final_understanding.model_dump(),

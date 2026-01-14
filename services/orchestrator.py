@@ -19,27 +19,32 @@ class Orchestrator:
         self.session: Optional[Session] = None
         logger.debug("Orchestrator initialized")
 
-    def start_session(self, user_input: str) -> MainAgentOutput:
+    def start_session(
+        self, user_input: str, user_profile: Optional[dict] = None
+    ) -> MainAgentOutput:
         """
         Start a new session with the user's raw idea.
 
         Args:
             user_input: The user's raw idea/input
+            user_profile: Optional user profile for personalization
 
         Returns:
             MainAgentOutput from the first round
         """
-        self.session = Session(original_input=user_input)
+        self.session = Session(original_input=user_input, user_profile=user_profile)
         logger.info(
             f"Session started: {self.session.session_id}",
             session_id=self.session.session_id,
             input_length=len(user_input),
+            has_profile=user_profile is not None,
         )
 
         output = self.main_agent.run(
             original_input=user_input,
             conversation_history=[],
             current_round=1,
+            user_profile=user_profile,
         )
 
         self.session.add_round(output)
@@ -87,6 +92,7 @@ class Orchestrator:
             original_input=self.session.original_input,
             conversation_history=self.session.get_history_for_agent(),
             current_round=self.session.current_round,
+            user_profile=self.session.user_profile,
         )
 
         self.session.add_round(output)
@@ -124,6 +130,7 @@ class Orchestrator:
             original_input=self.session.original_input,
             conversation_history=self.session.get_history_for_agent(),
             final_understanding=final_understanding,
+            user_profile=self.session.user_profile,
         )
 
         self.session.complete(final_output)
@@ -137,6 +144,26 @@ class Orchestrator:
         )
 
         return final_output
+
+    def force_conclude(self) -> FinalOutput:
+        """
+        Force early conclusion of the session.
+        Generates final report even if agent hasn't decided to conclude.
+
+        Returns:
+            FinalOutput with summary and action items based on current progress
+        """
+        if not self.session:
+            logger.error("No active session when forcing conclusion")
+            raise ValueError("No active session. Call start_session first.")
+
+        logger.info(
+            f"Force concluding session {self.session.session_id}",
+            session_id=self.session.session_id,
+            current_round=self.session.current_round,
+        )
+
+        return self._conclude()
 
     def get_session(self) -> Optional[Session]:
         """Get the current session."""

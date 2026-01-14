@@ -45,8 +45,118 @@
     <!-- Main Content -->
     <main class="main">
 
+      <!-- Screen 0: Profile -->
+      <section class="screen screen-profile active" id="screenProfile">
+        <div class="profile-layout">
+          <div class="profile-header">
+            <div class="editorial-badge">첫 번째 단계</div>
+            <h1 class="profile-title">당신에 대해 알려주세요</h1>
+            <p class="profile-subtitle">맞춤형 조언을 위해 간단한 정보를 입력해주세요</p>
+          </div>
+
+          <div class="profile-form">
+            <!-- Difficulty Mode - FIRST -->
+            <div class="form-section difficulty-section">
+              <h3 class="form-section-title">어떤 방식을 원하시나요?</h3>
+              <p class="form-hint">쉬운 길은 빠른 해답을, 어려운 길은 깊은 질문과 진정한 답을 드립니다.</p>
+
+              <div class="difficulty-cards" id="profileDifficulty">
+                <button type="button" class="difficulty-card" data-value="easy">
+                  <span class="difficulty-icon">🌱</span>
+                  <span class="difficulty-title">쉬운 길</span>
+                  <span class="difficulty-desc">간단하고 실천하기 쉬운 답변</span>
+                </button>
+                <button type="button" class="difficulty-card" data-value="medium">
+                  <span class="difficulty-icon">🌿</span>
+                  <span class="difficulty-title">균형 잡힌 길</span>
+                  <span class="difficulty-desc">실용적이면서 깊이 있는 조언</span>
+                </button>
+                <button type="button" class="difficulty-card" data-value="hard">
+                  <span class="difficulty-icon">🌳</span>
+                  <span class="difficulty-title">어려운 길</span>
+                  <span class="difficulty-desc">근본적인 질문과 진정한 변화</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Required Fields -->
+            <div class="form-section">
+              <h3 class="form-section-title">기본 정보</h3>
+
+              <div class="form-group">
+                <label class="form-label">나이</label>
+                <input type="number" id="profileAge" class="form-input" placeholder="예: 28" min="10" max="100">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">성별</label>
+                <div class="radio-group" id="profileGender">
+                  <button type="button" class="radio-btn" data-value="남성">남성</button>
+                  <button type="button" class="radio-btn" data-value="여성">여성</button>
+                  <button type="button" class="radio-btn" data-value="기타">기타</button>
+                  <button type="button" class="radio-btn" data-value="선택안함">선택안함</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">관심사 (여러 개 선택 가능)</label>
+                <div class="interest-tags" id="profileInterests">
+                  <button type="button" class="interest-tag" data-value="운동">운동</button>
+                  <button type="button" class="interest-tag" data-value="독서">독서</button>
+                  <button type="button" class="interest-tag" data-value="음악">음악</button>
+                  <button type="button" class="interest-tag" data-value="여행">여행</button>
+                  <button type="button" class="interest-tag" data-value="요리">요리</button>
+                  <button type="button" class="interest-tag" data-value="게임">게임</button>
+                  <button type="button" class="interest-tag" data-value="영화/드라마">영화/드라마</button>
+                  <button type="button" class="interest-tag" data-value="공부/자기계발">공부/자기계발</button>
+                  <button type="button" class="interest-tag" data-value="창작활동">창작활동</button>
+                  <button type="button" class="interest-tag" data-value="테크/IT">테크/IT</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Optional Fields -->
+            <div class="form-section">
+              <h3 class="form-section-title">추가 정보 <span class="optional-badge">선택사항</span></h3>
+
+              <div class="form-group">
+                <label class="form-label">직업</label>
+                <input type="text" id="profileJob" class="form-input" placeholder="예: 개발자, 학생, 디자이너, 마케터">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">추구하는 가치</label>
+                <input type="text" id="profileGoals" class="form-input" placeholder="예: 성장, 안정, 자유, 창의성, 균형">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">현재 상황</label>
+                <div class="radio-group" id="profileLifestyle">
+                  <button type="button" class="radio-btn" data-value="학생">학생</button>
+                  <button type="button" class="radio-btn" data-value="취준생">취준생</button>
+                  <button type="button" class="radio-btn" data-value="직장인">직장인</button>
+                  <button type="button" class="radio-btn" data-value="이직준비">이직준비</button>
+                  <button type="button" class="radio-btn" data-value="프리랜서">프리랜서</button>
+                  <button type="button" class="radio-btn" data-value="창업자">창업자</button>
+                  <button type="button" class="radio-btn" data-value="휴식중">휴식중</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-nav">
+              <button class="btn-profile-next" id="btnProfileNext">
+                <span>다음으로</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Screen 1: Welcome -->
-      <section class="screen screen-welcome active" id="screenWelcome">
+      <section class="screen screen-welcome" id="screenWelcome">
         <div class="welcome-layout">
           <div class="welcome-left">
             <div class="editorial-badge">idea → action</div>
@@ -133,6 +243,13 @@
                   <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
                 <span>처음으로</span>
+              </button>
+              <button class="btn-nav btn-end-early" id="btnEndEarly">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>마무리 후 최종보고서 받아보기</span>
               </button>
               <button class="btn-nav btn-next" id="btnNext" disabled>
                 <span>다음</span>

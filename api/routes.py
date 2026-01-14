@@ -71,8 +71,20 @@ async def log_requests(request: Request, call_next):
 
 
 # Request/Response Models
+class UserProfileInput(BaseModel):
+    """User profile for personalized responses."""
+    difficulty: str  # easy, medium, hard
+    age: int
+    gender: str
+    interests: List[str]
+    job: Optional[str] = None
+    goals: Optional[str] = None
+    lifestyle: Optional[str] = None
+
+
 class StartSessionRequest(BaseModel):
     input: str
+    user_profile: Optional[UserProfileInput] = None
 
 
 class SelectionInput(BaseModel):
@@ -113,22 +125,25 @@ async def start_session(
     db: Session = Depends(get_db_session),
 ):
     """Start a new session with user's raw idea."""
+    user_profile_dict = request.user_profile.model_dump() if request.user_profile else None
+
     logger.info(
         "Starting new session",
         input_length=len(request.input),
         input_preview=request.input[:100] + "..." if len(request.input) > 100 else request.input,
+        has_profile=user_profile_dict is not None,
     )
 
     try:
         orchestrator = Orchestrator()
-        output = orchestrator.start_session(request.input)
+        output = orchestrator.start_session(request.input, user_profile=user_profile_dict)
 
         session_id = orchestrator.session.session_id
         orchestrators[session_id] = orchestrator
 
         # Save to database
         repo = SessionRepository(db)
-        repo.create_session(session_id, request.input)
+        repo.create_session(session_id, request.input, user_profile=user_profile_dict)
         repo.add_round(
             session_id=session_id,
             round_number=1,
@@ -266,6 +281,46 @@ async def submit_selections(
         ],
         should_conclude=result.should_conclude,
     )
+
+
+@app.post("/session/{session_id}/end", response_model=SessionResponse)
+async def end_session_early(
+    session_id: str,
+    db: Session = Depends(get_db_session),
+):
+    """End session early and generate final report."""
+    logger.info(f"Early exit requested for session {session_id}", session_id=session_id)
+
+    if session_id not in orchestrators:
+        logger.warning(f"Session not found in memory: {session_id}")
+        raise HTTPException(status_code=404, detail="Session not found or expired")
+
+    orchestrator = orchestrators[session_id]
+    repo = SessionRepository(db)
+
+    try:
+        final = orchestrator.force_conclude()
+
+        logger.info(
+            f"Session {session_id} ended early",
+            session_id=session_id,
+            num_action_items=len(final.action_items),
+        )
+
+        # Save final output and cleanup
+        repo.set_final_output(session_id, final.model_dump())
+        del orchestrators[session_id]
+
+        return SessionResponse(
+            session_id=session_id,
+            summary="",
+            selections=[],
+            should_conclude=True,
+            final_output=final.model_dump(),
+        )
+    except Exception as e:
+        logger.error(f"Failed to end session early: {e}", error=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/session/{session_id}")

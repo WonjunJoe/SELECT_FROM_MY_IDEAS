@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from .base import BaseAgent
 from services.llm_client import LLMClient
@@ -22,6 +23,7 @@ class MainAgent(BaseAgent):
         original_input: str,
         conversation_history: list[dict],
         current_round: int,
+        user_profile: Optional[dict] = None,
     ) -> MainAgentOutput:
         """
         Process input and generate questions/options or decide to conclude.
@@ -30,11 +32,13 @@ class MainAgent(BaseAgent):
             original_input: The user's original raw idea
             conversation_history: List of previous rounds
             current_round: Current round number
+            user_profile: Optional user profile for personalization
 
         Returns:
             MainAgentOutput with understanding, summary, selections, and conclusion decision
         """
         input_data = {
+            "user_profile": user_profile,
             "original_input": original_input,
             "conversation_history": conversation_history,
             "current_round": current_round,

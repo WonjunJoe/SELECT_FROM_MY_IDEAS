@@ -25,11 +25,29 @@ class SessionModel(Base):
     status = Column(String(20), default="in_progress", nullable=False)
     current_round = Column(Integer, default=1, nullable=False)
 
+    # User profile stored as JSON
+    _user_profile = Column("user_profile", Text, nullable=True)
+
     # Final output stored as JSON
     _final_output = Column("final_output", Text, nullable=True)
 
     # Relationships
     rounds = relationship("RoundModel", back_populates="session", cascade="all, delete-orphan", order_by="RoundModel.round_number")
+
+    @hybrid_property
+    def user_profile(self) -> Optional[dict]:
+        """Get user profile as dictionary."""
+        if self._user_profile:
+            return json.loads(self._user_profile)
+        return None
+
+    @user_profile.setter
+    def user_profile(self, value: Optional[dict]):
+        """Set user profile from dictionary."""
+        if value:
+            self._user_profile = json.dumps(value, ensure_ascii=False)
+        else:
+            self._user_profile = None
 
     @hybrid_property
     def final_output(self) -> Optional[dict]:
@@ -53,6 +71,7 @@ class SessionModel(Base):
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
             "original_input": self.original_input,
+            "user_profile": self.user_profile,
             "status": self.status,
             "current_round": self.current_round,
             "final_output": self.final_output,

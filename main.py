@@ -29,8 +29,12 @@ def print_summary(summary: str):
     print("-" * 40 + "\n")
 
 
-def print_selections(output: MainAgentOutput) -> list[UserSelection]:
-    """Display selections and get user input."""
+def print_selections(output: MainAgentOutput) -> tuple[list[UserSelection], bool]:
+    """Display selections and get user input.
+
+    Returns:
+        Tuple of (selections list, early_exit flag)
+    """
     selections = []
 
     for i, selection in enumerate(output.selections, 1):
@@ -42,13 +46,20 @@ def print_selections(output: MainAgentOutput) -> list[UserSelection]:
         if selection.allow_other:
             print(f"  {len(selection.options) + 1}. Other (enter your own)")
 
+        print("\n  (Type 'done' to finish early and get your results)")
+
         while True:
             try:
-                choice = input("\nYour choice (number): ").strip()
+                choice = input("\nYour choice (number or 'done'): ").strip().lower()
 
                 if not choice:
                     print("Please enter a number.")
                     continue
+
+                # Check for early exit
+                if choice in ('done', 'q', 'quit', 'end'):
+                    logger.info("User requested early exit")
+                    return selections, True
 
                 choice_num = int(choice)
                 max_choice = len(selection.options) + (1 if selection.allow_other else 0)
@@ -86,9 +97,9 @@ def print_selections(output: MainAgentOutput) -> list[UserSelection]:
                     print(f"Please enter a number between 1 and {max_choice}.")
 
             except ValueError:
-                print("Please enter a valid number.")
+                print("Please enter a valid number or 'done' to finish early.")
 
-    return selections
+    return selections, False
 
 
 def print_final_output(output: FinalOutput):
@@ -198,7 +209,18 @@ def main():
                 break
 
             # Get user selections
-            selections = print_selections(output)
+            selections, early_exit = print_selections(output)
+
+            # Handle early exit
+            if early_exit:
+                print("\nEnding early. Generating your results...")
+                final = orchestrator.force_conclude()
+                logger.info(
+                    "Early exit - final output generated",
+                    num_action_items=len(final.action_items),
+                )
+                print_final_output(final)
+                break
 
             print("\nThinking...")
 

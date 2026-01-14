@@ -17,9 +17,14 @@ class SessionRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_session(self, session_id: str, original_input: str) -> SessionModel:
+    def create_session(
+        self,
+        session_id: str,
+        original_input: str,
+        user_profile: Optional[dict] = None,
+    ) -> SessionModel:
         """Create a new session."""
-        logger.debug(f"Creating session: {session_id}")
+        logger.debug(f"Creating session: {session_id}", has_profile=user_profile is not None)
 
         session = SessionModel(
             id=session_id,
@@ -27,6 +32,7 @@ class SessionRepository:
             status="in_progress",
             current_round=1,
         )
+        session.user_profile = user_profile
         self.db.add(session)
         self.db.commit()
         self.db.refresh(session)
