@@ -546,3 +546,22 @@
 2026-01-14 03:23:52.418 | INFO     | api.routes:log_requests:42 | Request: POST /session/start
 2026-01-14 03:23:52.419 | INFO     | api.routes:log_requests:53 | Response: POST /session/start -> 422
 2026-01-14 03:23:52.420 | INFO     | api.routes:log_requests:53 | Response: POST /session/start -> 422
+2026-01-14 13:24:54.401 | INFO     | core.logging:setup_logging:100 | Logging initialized
+2026-01-14 13:24:54.410 | INFO     | core.logging:setup_logging:100 | Logging initialized
+2026-01-14 13:24:54.410 | INFO     | __main__:<module>:21 | ==================================================
+2026-01-14 13:24:54.410 | INFO     | __main__:<module>:22 | Select From My Ideas - Web Server
+2026-01-14 13:24:54.410 | INFO     | __main__:<module>:23 | ==================================================
+2026-01-14 13:24:54.410 | INFO     | __main__:<module>:24 | Starting server at http://localhost:8000
+2026-01-14 13:24:54.507 | INFO     | core.logging:setup_logging:100 | Logging initialized
+2026-01-14 13:24:54.824 | INFO     | database.connection:init_db:36 | Initializing database at /Users/wonjunjoe/Desktop/workspace/Select_from_my_Ideas/data/sessions.db
+2026-01-14 13:24:54.827 | INFO     | database.connection:init_db:38 | Database tables created
+2026-01-14 13:24:54.827 | INFO     | api.routes:startup_event:414 | FastAPI application started
+2026-01-14 13:24:58.115 | INFO     | api.routes:log_requests:42 | Request: GET /
+2026-01-14 13:24:58.133 | INFO     | api.routes:log_requests:53 | Response: GET / -> 200
+2026-01-14 13:24:58.158 | INFO     | api.routes:log_requests:42 | Request: GET /styles.css
+2026-01-14 13:24:58.158 | INFO     | api.routes:log_requests:42 | Request: GET /app.js
+2026-01-14 13:24:58.168 | INFO     | api.routes:log_requests:53 | Response: GET /app.js -> 304
+2026-01-14 13:24:58.174 | INFO     | api.routes:log_requests:53 | Response: GET /styles.css -> 304
+2026-01-14 13:24:58.483 | INFO     | api.routes:log_requests:42 | Request: GET /favicon.ico
+2026-01-14 13:24:58.483 | INFO     | api.routes:log_requests:53 | Response: GET /favicon.ico -> 404
+2026-01-14 13:26:44.432 | INFO     | api.routes:shutdown_event:421 | FastAPI application shutting down. Active sessions: 0

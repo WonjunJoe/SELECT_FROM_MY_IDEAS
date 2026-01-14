@@ -72,6 +72,12 @@ class ActionItem(BaseModel):
 class FinalOutput(BaseModel):
     """Final synthesized output for the user."""
 
+    # User context - displayed at the top of the report
+    original_input: str = Field(description="The user's original input query")
+    user_profile: Optional[UserProfile] = Field(
+        default=None, description="User profile information"
+    )
+
     final_summary: str = Field(description="Summary of the entire conversation")
     action_items: list[ActionItem] = Field(description="Concrete action items")
     tips: list[str] = Field(description="Practical tips for the user")

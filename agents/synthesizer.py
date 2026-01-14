@@ -3,7 +3,7 @@ from typing import Optional
 
 from .base import BaseAgent
 from services.llm_client import LLMClient
-from models import FinalOutput, Understanding
+from models import FinalOutput, Understanding, UserProfile
 
 
 class Synthesizer(BaseAgent):
@@ -48,5 +48,14 @@ class Synthesizer(BaseAgent):
             user_message=user_message,
             temperature=0.7,
         )
+
+        # Add user context to the response
+        response["original_input"] = original_input
+        if user_profile:
+            response["user_profile"] = (
+                user_profile
+                if isinstance(user_profile, dict)
+                else user_profile.model_dump()
+            )
 
         return FinalOutput.model_validate(response)

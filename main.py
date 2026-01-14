@@ -108,6 +108,23 @@ def print_final_output(output: FinalOutput):
     print("  FINAL RESULTS")
     print("=" * 60)
 
+    # Display user's original input
+    print(f"\n## Your Query\n{output.original_input}")
+
+    # Display user profile if available
+    if output.user_profile:
+        print("\n## Your Profile")
+        profile = output.user_profile
+        print(f"  Age: {profile.age}")
+        print(f"  Gender: {profile.gender}")
+        print(f"  Interests: {', '.join(profile.interests)}")
+        if profile.job:
+            print(f"  Job: {profile.job}")
+        if profile.lifestyle:
+            print(f"  Lifestyle: {profile.lifestyle}")
+        if profile.goals:
+            print(f"  Goals: {profile.goals}")
+
     print(f"\n## Summary\n{output.final_summary}")
 
     print("\n## Action Items")
